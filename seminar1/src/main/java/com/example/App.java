@@ -1,7 +1,6 @@
 package com.example;
 import java.util.*;
 import java.util.stream.*;
-import java.util.stream.Collectors.*;
 
 public class App
 {
@@ -130,6 +129,7 @@ public class App
                 System.out.println("(3) Not implemented");
                 break;
         }
+        sc.close();
     }
 }
 
