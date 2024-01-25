@@ -1,0 +1,10 @@
+{
+  "id":  123,
+  "text": "a-tweet-text",
+  "user": {
+    "id": 456,
+    "name": "a-user-name"
+  },
+  "lang": "es",
+  "timestamp_ms": 789
+}
