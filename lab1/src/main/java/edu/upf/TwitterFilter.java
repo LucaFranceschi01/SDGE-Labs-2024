@@ -1,7 +1,7 @@
 package edu.upf;
 
-import upf.edu.filter.FileLanguageFilter;
-import upf.edu.uploader.S3Uploader;
+import edu.upf.filter.FileLanguageFilter;
+import edu.upf.uploader.S3Uploader;
 
 import java.io.IOException;
 import java.util.Arrays;
