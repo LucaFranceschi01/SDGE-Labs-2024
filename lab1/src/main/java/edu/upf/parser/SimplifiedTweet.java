@@ -39,8 +39,7 @@ public class SimplifiedTweet {
     // PLACE YOUR CODE HERE!
     
     try {
-      JsonElement jsonElement = JsonParser.parseString(jsonStr);
-      JsonObject jsonObject = jsonElement.getAsJsonObject();
+      JsonObject jsonObject = JsonParser.parseString(jsonStr).getAsJsonObject();
 
       long tweetId = jsonObject.get("id").getAsLong();
       String text = jsonObject.get("text").getAsString();
@@ -55,8 +54,7 @@ public class SimplifiedTweet {
 
     }
     catch (Exception e) {
-      Optional<SimplifiedTweet> empty = Optional.empty();
-      return empty;
+      return Optional.empty();
     }
   }
 
