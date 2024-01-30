@@ -58,6 +58,9 @@ public class SimplifiedTweet {
     }
   }
 
+  public String getLanguage() {
+    return language;
+  }
 
   @Override
   public String toString() {
