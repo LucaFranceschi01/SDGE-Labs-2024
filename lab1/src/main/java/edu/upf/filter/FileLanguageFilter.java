@@ -2,6 +2,7 @@ package edu.upf.filter;
 
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOError;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class FileLanguageFilter implements LanguageFilter {
 
             do {
                 line = bReader.readLine();
+                System.out.println(line);
 
                 opTweet = SimplifiedTweet.fromJson(line);
 
