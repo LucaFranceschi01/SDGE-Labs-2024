@@ -49,7 +49,7 @@ public class SimplifiedTweet {
       long timestampMs = jsonObject.get("timestamp_ms").getAsLong();
 
       SimplifiedTweet tweet = new SimplifiedTweet(tweetId, text, userId, userName, language, timestampMs);
-      Optional<SimplifiedTweet> opt_tweet = Optional.of(tweet); // no estoy seguro pq no se si checkea si hay valores vacios en 'tweet'
+      Optional<SimplifiedTweet> opt_tweet = Optional.ofNullable(tweet); // ??
       return opt_tweet;
 
     }
@@ -61,6 +61,6 @@ public class SimplifiedTweet {
 
   @Override
   public String toString() {
-    return ""; // esto no se si hay q cambiarlo pq en el documento del enunciado tienen algo diferente??
+    return new Gson().toJson(this);
   }
 }
