@@ -12,9 +12,9 @@ public class FileLanguageFilter implements LanguageFilter {
     final String inputFile;
     final String outputFile;
 
-    public FileLanguageFilter(String infile, String ofile) {
-        this.inputFile = infile;
-        this.outputFile = ofile;
+    public FileLanguageFilter(String inputFile, String outputFile) {
+        this.inputFile = inputFile;
+        this.outputFile = outputFile;
     }
 
     @Override
