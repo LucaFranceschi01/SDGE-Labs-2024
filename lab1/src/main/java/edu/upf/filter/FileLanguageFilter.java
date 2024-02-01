@@ -35,11 +35,11 @@ public class FileLanguageFilter implements LanguageFilter {
 
             do {
                 line = bReader.readLine();
-                System.out.println(line);
 
                 opTweet = SimplifiedTweet.fromJson(line);
 
                 if (opTweet.isEmpty()) {
+                    // System.out.println("isempty"); // why is duplicated ???
                     continue;
                 }
 
@@ -47,7 +47,8 @@ public class FileLanguageFilter implements LanguageFilter {
                 lang = tweet.getLanguage();
 
                 if (lang.equals(language)) {
-                    bWriter.write(line); // line or tweet.toString() ???
+                    bWriter.write(tweet.toString());
+                    bWriter.newLine();
                 }
             } while (line != null);
 
