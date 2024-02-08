@@ -18,8 +18,10 @@ public class FileLanguageFilter implements LanguageFilter {
     }
 
     @Override
-    public void filterLanguage(String language) throws Exception {
+    public Integer filterLanguage(String language) throws Exception {
         // append to ofile the tweets from infile from a language
+
+        Integer counter = 0;
 
         try {
             FileReader reader = new FileReader(inputFile);
@@ -48,6 +50,7 @@ public class FileLanguageFilter implements LanguageFilter {
                 if (lang.equals(language)) {
                     bWriter.write(tweet.toString());
                     bWriter.newLine();
+                    counter += 1;
                 }
             } while (line != null);
 
@@ -58,5 +61,7 @@ public class FileLanguageFilter implements LanguageFilter {
             e.printStackTrace();
             throw e;
         };
+
+        return counter;
     }
 }
