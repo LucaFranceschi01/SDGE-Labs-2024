@@ -1,7 +1,7 @@
 package edu.upf.uploader;
 
-import java.util.List;
 import java.io.File;
+import java.util.List;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -23,7 +23,7 @@ public class S3Uploader implements Uploader {
         this.credentials = credentialsProvider.getCredentials();
     }
 
-    public S3Uploader(String bucketName, String prefix, String profile) {
+    public S3Uploader(String bucketName, String prefix, String profile) throws IllegalArgumentException{
         this.bucketName = bucketName;
         this.prefix = prefix;
 
@@ -40,11 +40,13 @@ public class S3Uploader implements Uploader {
         String key;
         File file;
         PutObjectRequest request;
+        String[] splitted_name;
         
         for (String name : files) {
-            key = prefix + '/' + name;
+            splitted_name = name.split("/");
+            key = this.prefix + '/' + splitted_name[splitted_name.length-1];
             file = new File(name);
-            request = new PutObjectRequest(bucketName, key, file);
+            request = new PutObjectRequest(this.bucketName, key, file);
             s3Client.putObject(request);
         }
     }

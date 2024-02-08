@@ -19,7 +19,7 @@ public class TwitterFilter {
             try { filter.filterLanguage(language); } catch (Exception e) {}
         }
 
-        final S3Uploader uploader = new S3Uploader(bucket, "prefix", "upf");
+        final S3Uploader uploader = new S3Uploader(bucket, language, "default");
         uploader.upload(Arrays.asList(outputFile));
     }
 }
