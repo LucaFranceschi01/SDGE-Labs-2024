@@ -1,16 +1,10 @@
 package edu.upf.parser;
 
 import java.util.Optional;
-import java.util.OptionalLong;
-
-import javax.swing.text.html.Option;
 
 import com.google.gson.*;
 
 public class SimplifiedTweet {
-
-    // All classes use the same instance
-    private static JsonParser parser = new JsonParser();
 
     private final long tweetId;			  // the id of the tweet ('id')
     private final String text;  		      // the content of the tweet ('text')
@@ -74,6 +68,26 @@ public class SimplifiedTweet {
 
     public String getLanguage() {
         return language;
+    }
+
+    public long getTimestampMs() {
+        return timestampMs;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public long getTweetId() {
+        return tweetId;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     @Override
