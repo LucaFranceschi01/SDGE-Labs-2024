@@ -1,7 +1,11 @@
-seminar1/target
-lab1/twitter-eurovision-2018
-lab1/target
-
+# General ignores
 .vscode
 
+# Generated on mvn package
+target/
+
+# For testing
 outfiles/
+
+# Lab1 specific
+lab1/twitter-eurovision-2018
