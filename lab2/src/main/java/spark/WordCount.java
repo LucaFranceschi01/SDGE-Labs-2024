@@ -27,6 +27,7 @@ public class WordCount {
             .reduceByKey((a, b) -> a + b);
         System.out.println("Total words: " + counts.count());
         counts.saveAsTextFile(outputDir);
+        // sparkContext.stop();
     }
 
     private static String normalise(String word) {
