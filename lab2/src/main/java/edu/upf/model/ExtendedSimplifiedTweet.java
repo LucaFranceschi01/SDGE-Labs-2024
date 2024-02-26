@@ -56,7 +56,7 @@ public class ExtendedSimplifiedTweet implements Serializable {
             Optional<String> userName = Optional.ofNullable(jsonObject.getAsJsonObject("user").get("name")).map(JsonElement::getAsString);
             Optional<Long> followersCount = Optional.ofNullable(jsonObject.getAsJsonObject("user").get("followers_count")).map(JsonElement::getAsLong);
             Optional<String> language = Optional.ofNullable(jsonObject.get("lang")).map(JsonElement::getAsString);
-            Optional<Boolean> isRetweeted = Optional.ofNullable(jsonObject.get("retweetedstatus")).map(JsonElement::getAsBoolean);
+            Optional<Boolean> isRetweeted = Optional.ofNullable(jsonObject.has("retweeted_status"));
             Optional<Long> retweetedUserId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").getAsJsonObject("user").get("id")).map(JsonElement::getAsLong);
             Optional<Long> retweetedTweetId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").get("id")).map(JsonElement::getAsLong);
             Optional<Long> timestampMs = Optional.ofNullable(jsonObject.get("timestamp_ms")).map(JsonElement::getAsLong);
