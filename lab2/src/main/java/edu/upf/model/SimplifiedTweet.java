@@ -58,6 +58,7 @@ public class SimplifiedTweet {
             //     )
             // );
 
+            System.out.println(opt_tweet.toString());
             return opt_tweet;
 
         }

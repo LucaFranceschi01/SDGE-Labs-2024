@@ -37,6 +37,7 @@ public class BiGramsApp {
 
         
         //Bigram Counter
+        /*
         JavaPairRDD<String, String, Integer> counts = sentences
             .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
             .map(word -> normalise(word))
@@ -44,9 +45,11 @@ public class BiGramsApp {
             .mapToPair(idx -> new Tuple2<>(idx, idx+1)) 
             .mapToPair(bigram -> new Tuple2<>(bigram, 1))//Map each bigram to a key-value pair
             .reduceByKey((a,b) -> a+b); //Sum values of each key
+        
 
         counts.saveAsTextFile(outputDir);
         sparkContext.close();
+        */
     }
 
     private static String normalise(String word) {
