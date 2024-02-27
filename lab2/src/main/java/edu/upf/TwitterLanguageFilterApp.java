@@ -14,12 +14,17 @@ public class TwitterLanguageFilterApp {
         String language = argsList.get(0);
         String outputFile = argsList.get(1);
 
+        System.out.println("fi fai fo");
+        System.out.println(language);
+        System.out.println(outputFile);
+
         //Create a SparkContext to initialize
         SparkConf conf = new SparkConf().setAppName("Twitter Filter");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
         for(String inputFile: argsList.subList(2, argsList.size())) {
             final FileLanguageFilter filter = new FileLanguageFilter(inputFile, outputFile, sparkContext);
+            System.out.println(inputFile);
             try {
                 Long localCount = filter.filterLanguage(language);
                 System.out.println(localCount);

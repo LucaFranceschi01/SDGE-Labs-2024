@@ -10,3 +10,8 @@ s3://aws-lsds2020-lab2-data/jars/spark-test-1.0-SNAPSHOT.jar
 
 # Acess Hadoop Console
 ssh -i ~/ec2-emr-ssh-key.pem hadoop@ec2-100-25-143-246.compute-1.amazonaws.com
+
+
+s3://lsds2024-lab2.output.u199149/jars/lab2/target/spark-twitter-filter-1.0-SNAPSHOT.jar
+--class edu.upf.TwitterLanguageFilterApp
+es s3://lsds2024-lab2.output.u199149/output s3://lsds2024-lab2.output.u199149/input/Eurovision3.json
