@@ -7,7 +7,7 @@ import org.apache.spark.SparkConf;
 import scala.Tuple2;
 
 import java.util.Arrays;
-import edu.upf.model.*;
+import java.util.List;
 
 
 
@@ -23,9 +23,34 @@ public class BiGramsApp {
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
         // Load input
         JavaRDD<String> sentences = sparkContext.textFile(input);
+       
+        //Bigram
+        JavaRDD<String> word_list = sentences
+            .filter(x -> x.getLanguage().equals(language))
+            .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
+            .map(word -> normalise(word));
 
+        for (int word = 0; word < length(word_list); word++){
+            bigram = new Tuple2<>(word_list[word], word_list[word + 1]);
+        } 
+        JavaPairRDD<String, String> bigram_count = bigram
+            .mapToPair(bigram -> new Tuple2<>(bigram, 1))//Map each bigram to a key-value pair
+            .reduceByKey((a, b) -> a + b); //Sum values of each key
         
-        //Word Counter
+        //System.out.println("Top-10 most popular bi-grams: " + ));
+        JavaPairRDD<List<String>, Integer> top_10 = bigram_count.sortByKey(false);
+        bigram_count.saveAsTextFile(outputDir);
+        sparkContext.close();
+        
+    }
+
+    private static String normalise(String word) {
+        return word.trim().toLowerCase(); //Remove word trimming, lower-casing ////should also filter empty words
+    }
+}
+
+
+//Word Counter
         /*JavaPairRDD<String, Integer> counts = sentences
             .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
             .map(word -> normalise(word)) //Remove word trimming, lower-casing ////should also filter empty words
@@ -34,25 +59,3 @@ public class BiGramsApp {
         System.out.println("Total words: " + counts.count());
         counts.saveAsTextFile(outputDir);
         sparkContext.close();*/
-
-        
-        //Bigram Counter
-        /*
-        JavaPairRDD<String, String, Integer> counts = sentences
-            .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
-            .map(word -> normalise(word))
-            .filter(w -> w.getLanguage().equals(language))
-            .mapToPair(idx -> new Tuple2<>(idx, idx+1)) 
-            .mapToPair(bigram -> new Tuple2<>(bigram, 1))//Map each bigram to a key-value pair
-            .reduceByKey((a,b) -> a+b); //Sum values of each key
-        
-
-        counts.saveAsTextFile(outputDir);
-        sparkContext.close();
-        */
-    }
-
-    private static String normalise(String word) {
-        return word.trim().toLowerCase(); //Remove word trimming, lower-casing ////should also filter empty words
-    }
-}
