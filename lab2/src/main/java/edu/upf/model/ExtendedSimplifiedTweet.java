@@ -23,7 +23,6 @@ public class ExtendedSimplifiedTweet implements Serializable {
     public ExtendedSimplifiedTweet(long tweetId, String text, long userId, String userName,
                                 long followersCount, String language, boolean isRetweeted,
                                 Long retweetedUserId, Long retweetedTweetId, long timestampMs) {
-        //IMPLEMENT ME
         this.tweetId = tweetId;
         this.text = text;
         this.userId = userId;
@@ -46,9 +45,9 @@ public class ExtendedSimplifiedTweet implements Serializable {
     * @return an {@link Optional} of a {@link ExtendedSimplifiedTweet}
     */
     public static Optional<ExtendedSimplifiedTweet> fromJson(String jsonStr) {
-        //IMPLEMENT ME
         try {
-            JsonObject jsonObject = JsonParser.parseString(jsonStr).getAsJsonObject();
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObject = parser.parse(jsonStr).getAsJsonObject();
 
             Optional<Long> tweetId = Optional.ofNullable(jsonObject.get("id")).map(JsonElement::getAsLong);
             Optional<String> text = Optional.ofNullable(jsonObject.get("text")).map(JsonElement::getAsString);
@@ -56,14 +55,23 @@ public class ExtendedSimplifiedTweet implements Serializable {
             Optional<String> userName = Optional.ofNullable(jsonObject.getAsJsonObject("user").get("name")).map(JsonElement::getAsString);
             Optional<Long> followersCount = Optional.ofNullable(jsonObject.getAsJsonObject("user").get("followers_count")).map(JsonElement::getAsLong);
             Optional<String> language = Optional.ofNullable(jsonObject.get("lang")).map(JsonElement::getAsString);
-            Optional<Boolean> isRetweeted = Optional.ofNullable(jsonObject.has("retweeted_status"));
-            Optional<Long> retweetedUserId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").getAsJsonObject("user").get("id")).map(JsonElement::getAsLong);
-            Optional<Long> retweetedTweetId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").get("id")).map(JsonElement::getAsLong);
+            boolean isRetweeted = jsonObject.has("retweeted_status");
+
+            Optional<Long> retweetedUserId, retweetedTweetId;
+
+            if (isRetweeted) {
+                retweetedUserId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").getAsJsonObject("user").get("id")).map(JsonElement::getAsLong);
+                retweetedTweetId = Optional.ofNullable(jsonObject.getAsJsonObject("retweeted_status").get("id")).map(JsonElement::getAsLong);
+            } else {
+                retweetedUserId = Optional.of(-1L); // default value if Tweet has not wetweeted_status, we assume both 'id' are only positive, so -1 does not create conflicts
+                retweetedTweetId = Optional.of(-1L);
+            }
+
             Optional<Long> timestampMs = Optional.ofNullable(jsonObject.get("timestamp_ms")).map(JsonElement::getAsLong);
 
 
             ExtendedSimplifiedTweet tweet = new ExtendedSimplifiedTweet(tweetId.get(), text.get(), userId.get(), userName.get(), followersCount.get(), language.get(), 
-                                                                        isRetweeted.get(), retweetedUserId.get(), retweetedTweetId.get(), timestampMs.get());
+                                                                        isRetweeted, retweetedUserId.get(), retweetedTweetId.get(), timestampMs.get());
             Optional<ExtendedSimplifiedTweet> opt_tweet = Optional.ofNullable(tweet);
 
             return opt_tweet;   

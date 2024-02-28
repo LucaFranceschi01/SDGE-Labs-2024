@@ -2,62 +2,90 @@ package spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+
+import edu.upf.model.ExtendedSimplifiedTweet;
+
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.SparkConf;
 import scala.Tuple2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 
 
 public class BiGramsApp {
     public static void main(String[] args){
-        String language = args[0];
-        String outputDir = args[1];
-        String input = args[2];
+        List<String> argsList = Arrays.asList(args);
+        String language = argsList.get(0);
+        String outputDir = argsList.get(1);
 
         //Create a SparkContext to initialize
         SparkConf conf = new SparkConf().setAppName("BiGramsApp");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
-        // Load input
-        JavaRDD<String> sentences = sparkContext.textFile(input);
-       
 
-        /*
-        //Bigram
-        JavaRDD<String> word_list = sentences
-            .filter(x -> x.getLanguage().equals(language))
-            .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
-            .map(word -> normalise(word));
+        for(String inputFile: argsList.subList(2, argsList.size())) {
+            
+            // Load input
+            JavaRDD<String> tweets = sparkContext.textFile(inputFile);
 
-        for (int word = 0; word < length(word_list); word++){
-            bigram = new Tuple2<>(word_list[word], word_list[word + 1]);
-        } 
-        JavaPairRDD<String, String> bigram_count = bigram
-            .mapToPair(bigram -> new Tuple2<>(bigram, 1))//Map each bigram to a key-value pair
-            .reduceByKey((a, b) -> a + b); //Sum values of each key
+            // Parsed tweets
+            JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets
+                .map(ExtendedSimplifiedTweet::fromJson)
+                .filter(tweet -> !tweet.isEmpty())
+                .filter(tweet -> (tweet.get().getLanguage()).equals(language));
+            
+            // Create a key-value RDD where key is the bigram in the form Tuple2<word1, word2> and value is times they appear
+            JavaPairRDD<Tuple2<String, String>, Long> bigrams = filteredTweets
+                .map(tweet -> tweet.get().getText())
+                .flatMap(text -> bigramsFromText(text).iterator())
+                .mapToPair(bigram -> new Tuple2<Tuple2<String, String>, Long>(bigram, 1L))
+                .reduceByKey((a, b) -> a + b);
+
+            // Get bigrams ordered by descending frequency
+            JavaPairRDD<Tuple2<String, String>, Long> bigrams_desdencing_frequency = bigrams
+                .mapToPair(tuple -> new Tuple2<Long, Tuple2<String, String>>(tuple._2, tuple._1))
+                .sortByKey(false)
+                .mapToPair(tuples -> new Tuple2<Tuple2<String, String>, Long>(tuples._2, tuples._1));
+
+            // Output bigrams to output file
+            String[] splitted = inputFile.split("/");
+            String subfolder = "/" + splitted[splitted.length-1];   // me gustaria quitarle el .json pero no consigo hacerlo
+
+            bigrams_desdencing_frequency.saveAsTextFile(outputDir + subfolder);
+
+        }
         
-        //System.out.println("Top-10 most popular bi-grams: " + ));
-        JavaPairRDD<List<String>, Integer> top_10 = bigram_count.sortByKey(false);
-        bigram_count.saveAsTextFile(outputDir);
         sparkContext.close();
-        */
     }
 
     private static String normalise(String word) {
-        return word.trim().toLowerCase(); //Remove word trimming, lower-casing ////should also filter empty words
+        return word.trim().toLowerCase(); //Remove word trimming, lower-casing
+    }
+
+    private static List<Tuple2<String, String>> bigramsFromText(String text) {
+        //List of bigrams
+        List<Tuple2<String, String>> bigrams = new ArrayList<Tuple2<String, String>>();
+        
+        // Get array of words
+        String[] words = text.split(" ");
+
+        // Remove the elements equal to " "                             // --> no se si lo tiene q hacer el normalise, yo creo q se puede dejar ahi y explicar en el report
+        List<String> filteredWords = new ArrayList<String>();
+        for (String word:words) {
+            if (!word.equals(" ")) {
+                filteredWords.add(word);
+            }
+        }
+
+        // Create bigrams (normalising first) and adding them to the bigram list
+        for (int ind = 0; ind < words.length - 2; ind++) {
+            bigrams.add(new Tuple2<String,String>(normalise(filteredWords.get(ind)), normalise(filteredWords.get(ind+1))));
+        }
+
+        return bigrams;
     }
 }
-
-
-//Word Counter
-        /*JavaPairRDD<String, Integer> counts = sentences
-            .flatMap(s -> Arrays.asList(s.split("[ ]")).iterator()) //Split each tweet in words and flatten into a list of words
-            .map(word -> normalise(word)) //Remove word trimming, lower-casing ////should also filter empty words
-            .mapToPair(word -> new Tuple2<>(word, 1)) //Map each word to a key-value pair
-            .reduceByKey((a, b) -> a + b); //Sum values of each key
-        System.out.println("Total words: " + counts.count());
-        counts.saveAsTextFile(outputDir);
-        sparkContext.close();*/
