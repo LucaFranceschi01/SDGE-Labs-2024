@@ -24,6 +24,8 @@ public class BiGramsApp {
         // Load input
         JavaRDD<String> sentences = sparkContext.textFile(input);
        
+
+        /*
         //Bigram
         JavaRDD<String> word_list = sentences
             .filter(x -> x.getLanguage().equals(language))
@@ -41,7 +43,7 @@ public class BiGramsApp {
         JavaPairRDD<List<String>, Integer> top_10 = bigram_count.sortByKey(false);
         bigram_count.saveAsTextFile(outputDir);
         sparkContext.close();
-        
+        */
     }
 
     private static String normalise(String word) {

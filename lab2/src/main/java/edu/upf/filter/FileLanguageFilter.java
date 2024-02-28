@@ -2,7 +2,6 @@ package edu.upf.filter;
 
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.util.SizeEstimator;
 
 import edu.upf.model.*;
 
@@ -22,24 +21,17 @@ public class FileLanguageFilter implements LanguageFilter {
     @Override
     public Long filterLanguage(String language) throws Exception {
         JavaRDD<String> tweets = jsc.textFile(inputFile);
-        System.out.println("Lines:" + tweets.count());
-        JavaRDD<Optional<SimplifiedTweet>> filteredTweets = tweets
-            .map(SimplifiedTweet::fromJson);
-            //.filter(tweet -> !tweet.isEmpty())
-            //.filter(tweet -> (tweet.get().getLanguage()).equals(language));
-        
-        //System.out.println("Language filtered:" + filteredTweets.count());
 
+        JavaRDD<Optional<SimplifiedTweet>> filteredTweets = tweets
+            .map(SimplifiedTweet::fromJson)
+            .filter(tweet -> !tweet.isEmpty())
+            .filter(tweet -> (tweet.get().getLanguage()).equals(language));
+        
         JavaRDD<String> output = filteredTweets.map(tweet -> tweet.toString());
 
-        System.out.println("filters");
-        //String path = outputFile + "/out.json";
-        //System.out.println(output.count());
-        output.saveAsTextFile(outputFile);
-        System.out.println("saves");
+        Long counter = output.count();
 
-        Long counter = SizeEstimator.estimate(filteredTweets);
-        System.out.println(counter);
+        output.saveAsTextFile(outputFile);  // IMPORTANTE: si la carpeta 'outputFile' ya existe, no genera output. Por lo tanto, pa rerunnear hay q eliminar la carpeta.
 
         return counter;
     }

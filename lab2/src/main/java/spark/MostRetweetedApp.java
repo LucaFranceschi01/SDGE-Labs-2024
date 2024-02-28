@@ -1,4 +1,4 @@
-ackage spark;
+package spark;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -22,7 +22,7 @@ public class MostRetweetedApp {
         JavaRDD<String> tweets = sparkContext.textFile(input);
        
        
-        
+        /*
        
         //Find the most retweeted users
         JavaPairRDD<Long, Integer> top_userretweets = tweets
@@ -44,5 +44,6 @@ public class MostRetweetedApp {
         //System.out.println("Top-10 most retweeted users: " + ));
         top.saveAsTextFile(outputDir);
         sparkContext.close();
+        */
     }
 }

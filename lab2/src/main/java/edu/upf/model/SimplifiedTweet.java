@@ -32,7 +32,8 @@ public class SimplifiedTweet {
     public static Optional<SimplifiedTweet> fromJson(String jsonStr) {
 
         try {
-            JsonObject jsonObject = JsonParser.parseString(jsonStr).getAsJsonObject();
+            JsonParser parser = new JsonParser();
+            JsonObject jsonObject = parser.parse(jsonStr).getAsJsonObject();
 
             Optional<Long> tweetId = Optional.ofNullable(jsonObject.get("id")).map(JsonElement::getAsLong);
             Optional<String> text = Optional.ofNullable(jsonObject.get("text")).map(JsonElement::getAsString);
@@ -58,7 +59,6 @@ public class SimplifiedTweet {
             //     )
             // );
 
-            System.out.println(opt_tweet.toString());
             return opt_tweet;
 
         }
