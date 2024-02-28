@@ -6,6 +6,8 @@ target/
 
 # For testing
 outfiles/
+_output-folder/
+outputTest/
 
 # Lab1 specific
 lab1/twitter-eurovision-2018
