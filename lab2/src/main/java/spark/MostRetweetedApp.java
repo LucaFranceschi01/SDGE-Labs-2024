@@ -19,23 +19,30 @@ public class MostRetweetedApp {
         SparkConf conf = new SparkConf().setAppName("MostRetweetedApp");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
         // Load input
-        JavaRDD<String> tweet = sparkContext.textFile(input);
+        JavaRDD<String> tweets = sparkContext.textFile(input);
        
        
         
-        JavaPairRDD<String, Integer> rt_tweets_counter = tweet
+       
+        //Find the most retweeted users
+        JavaPairRDD<Long, Integer> top_userretweets = tweets
+            .mapToPair(u_rtw -> new Tuple2<>(u_rtw.getRetweetedUserId(), 1)) //Map each user to a key-value pair
+            .reduceByKey((a, b) -> a + b); //Sum values of each key
+            //.sortByKey(false);
+
+        //Find the most retweeted tweets
+        JavaPairRDD<String, Integer> top_retweets = tweets
             .filter(x -> x.getIsRetweeted().equals(true))
             .mapToPair(rtw -> new Tuple2<>(rtw, 1)) //Map each tweet to a key-value pair
             .reduceByKey((a, b) -> a + b); //Sum values of each key
 
-        //Find the most retweeted users
-        JavaPairRDD<String, Integer> top_user_rt = rt_tweets_counter
-            .mapToPair(u_rtw -> new Tuple2<>(u_rtw, 1)) //Map each user to a key-value pair
-            .reduceByKey((a, b) -> a + b) //Sum values of each key
+        //Find the mst retweeted tweet for the 10 most retweeted users (one per user)
+        JavaPairRDD<Long, Integer> top = top_retweets.join(top_userretweets)
             .sortByKey(false);
 
+
         //System.out.println("Top-10 most retweeted users: " + ));
-        .saveAsTextFile(outputDir);
+        top.saveAsTextFile(outputDir);
         sparkContext.close();
     }
 }
