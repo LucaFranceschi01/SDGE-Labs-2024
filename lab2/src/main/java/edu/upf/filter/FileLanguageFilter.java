@@ -31,7 +31,10 @@ public class FileLanguageFilter implements LanguageFilter {
 
         Long counter = output.count();
 
-        output.saveAsTextFile(outputFile);  // IMPORTANTE: si la carpeta 'outputFile' ya existe, no genera output. Por lo tanto, pa rerunnear hay q eliminar la carpeta.
+        String[] splitted = inputFile.split("/");
+        String subfolder = "/" + splitted[splitted.length-1];   // me gustaria quitarle el .json pero no consigo hacerlo
+
+        output.saveAsTextFile(outputFile + subfolder);
 
         return counter;
     }
