@@ -23,38 +23,33 @@ public class BiGramsApp {
         //Create a SparkContext to initialize
         SparkConf conf = new SparkConf().setAppName("BiGramsApp");
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
+        JavaRDD<String> tweets = sparkContext.emptyRDD();
 
         for(String inputFile: argsList.subList(2, argsList.size())) {
             
             // Load input
-            JavaRDD<String> tweets = sparkContext.textFile(inputFile);
-
-            // Parsed tweets
-            JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets
-                .map(ExtendedSimplifiedTweet::fromJson)
-                .filter(tweet -> !tweet.isEmpty())
-                .filter(tweet -> (tweet.get().getLanguage()).equals(language));
-            
-            // Create a key-value RDD where key is the bigram in the form Tuple2<word1, word2> and value is times they appear
-            JavaPairRDD<Tuple2<String, String>, Long> bigrams = filteredTweets
-                .map(tweet -> tweet.get().getText())
-                .flatMap(text -> bigramsFromText(text).iterator())
-                .mapToPair(bigram -> new Tuple2<Tuple2<String, String>, Long>(bigram, 1L))
-                .reduceByKey((a, b) -> a + b);
-
-            // Get bigrams ordered by descending frequency
-            JavaPairRDD<Tuple2<String, String>, Long> bigrams_desdencing_frequency = bigrams
-                .mapToPair(tuple -> new Tuple2<Long, Tuple2<String, String>>(tuple._2, tuple._1))
-                .sortByKey(false)
-                .mapToPair(tuples -> new Tuple2<Tuple2<String, String>, Long>(tuples._2, tuples._1));
-
-            // Output bigrams to output file
-            String[] splitted = inputFile.split("/");
-            String subfolder = "/" + splitted[splitted.length-1];   // me gustaria quitarle el .json pero no consigo hacerlo
-
-            bigrams_desdencing_frequency.saveAsTextFile(outputDir + subfolder);
-
+            tweets = sparkContext.textFile(inputFile).union(tweets);
         }
+        // Parsed tweets
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets
+            .map(ExtendedSimplifiedTweet::fromJson)
+            .filter(tweet -> !tweet.isEmpty())
+            .filter(tweet -> (tweet.get().getLanguage()).equals(language));
+        
+        // Create a key-value RDD where key is the bigram in the form Tuple2<word1, word2> and value is times they appear
+        JavaPairRDD<Tuple2<String, String>, Long> bigrams = filteredTweets
+            .map(tweet -> tweet.get().getText())
+            .flatMap(text -> bigramsFromText(text).iterator())
+            .mapToPair(bigram -> new Tuple2<Tuple2<String, String>, Long>(bigram, 1L))
+            .reduceByKey((a, b) -> a + b);
+
+        // Get bigrams ordered by descending frequency
+        JavaPairRDD<Tuple2<String, String>, Long> bigrams_desdencing_frequency = bigrams
+            .mapToPair(tuple -> new Tuple2<Long, Tuple2<String, String>>(tuple._2, tuple._1))
+            .sortByKey(false)
+            .mapToPair(tuples -> new Tuple2<Tuple2<String, String>, Long>(tuples._2, tuples._1));
+
+        bigrams_desdencing_frequency.saveAsTextFile(outputDir);
         
         sparkContext.close();
     }
