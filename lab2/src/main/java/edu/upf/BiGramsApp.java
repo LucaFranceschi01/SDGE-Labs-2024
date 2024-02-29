@@ -26,10 +26,10 @@ public class BiGramsApp {
         JavaRDD<String> tweets = sparkContext.emptyRDD();
 
         for(String inputFile: argsList.subList(2, argsList.size())) {
-            
             // Load input
             tweets = sparkContext.textFile(inputFile).union(tweets);
         }
+
         // Parsed tweets
         JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets
             .map(ExtendedSimplifiedTweet::fromJson)
@@ -44,12 +44,12 @@ public class BiGramsApp {
             .reduceByKey((a, b) -> a + b);
 
         // Get bigrams ordered by descending frequency
-        JavaPairRDD<Tuple2<String, String>, Long> bigrams_desdencing_frequency = bigrams
+        JavaPairRDD<Tuple2<String, String>, Long> bigrams_descending_frequency = bigrams
             .mapToPair(tuple -> new Tuple2<Long, Tuple2<String, String>>(tuple._2, tuple._1))
             .sortByKey(false)
             .mapToPair(tuples -> new Tuple2<Tuple2<String, String>, Long>(tuples._2, tuples._1));
 
-        bigrams_desdencing_frequency.saveAsTextFile(outputDir);
+        bigrams_descending_frequency.saveAsTextFile(outputDir);
         
         sparkContext.close();
     }
