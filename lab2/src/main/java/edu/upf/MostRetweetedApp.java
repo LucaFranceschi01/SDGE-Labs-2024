@@ -63,10 +63,10 @@ public class MostRetweetedApp {
                 .take(10);
 
             // Calculate most retweeted tweet for each of the top ten most retweeted users.
-            for (Long user : top_ten_users) {
-                JavaPairRDD<Long, Long> most_retweeted_tweet_user = retweeted_users_count
-                    .filter(tweet -> filterTweetsByRetweetedUser(tweet._1, user));
-            }
+            // for (Long user : top_ten_users) {
+            //     JavaPairRDD<Long, Long> most_retweeted_tweet_user = retweeted_users_count
+            //         .filter(tweet -> filterTweetsByRetweetedUser(tweet._1, user));
+            // }
 
         }
         

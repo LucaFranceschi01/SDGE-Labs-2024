@@ -31,10 +31,12 @@ public class FileLanguageFilter implements LanguageFilter {
 
         Long counter = output.count();
 
-        String[] splitted = inputFile.split("/");
-        String subfolder = "/" + splitted[splitted.length-1];   // me gustaria quitarle el .json pero no consigo hacerlo
+        // not a big fan, remove functionality
+        // String[] splitted = inputFile.split("/");
+        // String subfolder = "/" + splitted[splitted.length-1];
 
-        output.saveAsTextFile(outputFile + subfolder);
+        // output.saveAsTextFile(outputFile + subfolder);
+        output.saveAsTextFile(outputFile);
 
         return counter;
     }
