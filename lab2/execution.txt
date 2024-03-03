@@ -20,4 +20,4 @@ spark-submit --class edu.upf.BiGramsApp --master local[2] target/spark-twitter-f
 
 s3://lsds2024-lab2.output.u199149/jars/spark-twitter-filter-1.0-SNAPSHOT-fat.jar
 
-spark-submit --class edu.upf.MostRetweetedApp --master local[2] target/spark-twitter-filter-1.0-SNAPSHOT.jar ./testfiles ../lab1/twitter-eurovision-2018/Eurovision3.json
+spark-submit --class edu.upf.MostRetweetedApp --master local[2] target/spark-twitter-filter-1.0-SNAPSHOT.jar ./outputTest ../lab1/twitter-eurovision-2018/Eurovision3.json

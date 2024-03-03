@@ -70,6 +70,22 @@ public class MostRetweetedApp {
             .mapToPair(tuple -> tuple.swap());
             // .mapToPair(tuples -> new Tuple2<Long, Long>(tuples._2, tuples._1));
 
+        // if we order again by user id we can do a take, parallelize and then finalize (o no, no lo he conseguido)
+        // JavaPairRDD<Long, Long> reordering = sparkContext.parallelizePairs(retweeted_tweets_count_descending
+        //     .mapToPair(entry -> entry._1.swap())
+        //     .sortByKey(false)
+        //     .mapToPair(tuple -> tuple.swap())
+        //     .take(10)
+        // );
+
+        // JavaPairRDD<Long, Long> reordering = retweeted_tweets_count_descending
+        //     .mapToPair(entry -> entry._1.swap())
+        //     .sortByKey(false)
+        //     .mapToPair(tuple -> tuple.swap());
+
+        // JavaPairRDD<Long, Long> last = reordering // FALTA HACER QUE SOLO HAYA UN TWEET CON MAX RETWEETS PER BEST USER
+        //     .filter(entry -> top_ten_users.contains(entry._1));
+
         JavaPairRDD<Long, Long> last = retweeted_tweets_count_descending // FALTA HACER QUE SOLO HAYA UN TWEET CON MAX RETWEETS PER BEST USER
             .filter(entry -> top_ten_users.contains(entry._1._2))
             .mapToPair(entry -> entry._1);
