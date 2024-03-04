@@ -47,10 +47,8 @@ LSDS-G8-lab2.zip
 │                   ├── BiGramsApp.java
 │                   ├── MostRetweetedApp.java
 │                   └── TwitterLanguageFilterApp.java
-└── target
-    └── spark-twitter-filter-1.0-SNAPSHOT.jar
-
-7 directories, 8 files
+└── spark-twitter-filter-1.0-SNAPSHOT.jar
+6 directories, 8 files
 ```
 
 > [!NOTE]
@@ -343,6 +341,12 @@ The top 10 most popular bigrams obtained and their number of times appeared were
 
 ## Most retweeted tweets for most retweeted users
 
+The program is working and we believe it is correct. However, it is not really optimized yet and takes too much time to execute, which didn't allow us to fill this section in time.
+
 ### Approach
 
+Due to lack of time we weren't able to fill this section.
+
 ### Results
+
+Due to lack of time we weren't able to fill this section.
