@@ -36,6 +36,9 @@ public class MostRetweetedApp {
             .filter(tweet -> !tweet.isEmpty())
             .filter(tweet -> tweet.get().getIsRetweeted());
 
+        // Persist the RDD because we will use it A LOT
+        filteredTweets.cache();
+
         // Retweeted users count
         JavaPairRDD<Long, Long> retweeted_users_count = filteredTweets
             .map(tweet -> tweet.get().getRetweetedUserId())
@@ -64,6 +67,9 @@ public class MostRetweetedApp {
             .mapToPair(tuple -> tuple.swap())
             .sortByKey(false)
             .mapToPair(tuple -> tuple.swap());
+
+        // Persist the RDD because we will use it A LOT
+        retweeted_tweets_count_descending.cache();
         
         List<Tuple2<Long, Long>> user_tweet = new ArrayList<Tuple2<Long, Long>>();
 
