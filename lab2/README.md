@@ -341,12 +341,70 @@ The top 10 most popular bigrams obtained and their number of times appeared were
 
 ## Most retweeted tweets for most retweeted users
 
-The program is working and we believe it is correct. However, it is not really optimized yet and takes too much time to execute, which didn't allow us to fill this section in time.
-
 ### Approach
 
-Due to lack of time we weren't able to fill this section.
+For this task we started in a very similar way to the `TwitterLanguageFilterApp` and `BiGramsApp`: we joined all the tweets from all the input files in a single RDD and then passing them to instances of the [ExtendedSimplifiedTweet](./src/main/java/edu/upf/model/ExtendedSimplifiedTweet.java) class. Then we only kept the non-empty ones that were retweeted (`getIsRetweeted() == false`).
+
+We called that RDD `filteredTweets` and persisted it to reduce computation time as we will reuse the calculations many times. We persisted it using:
+
+```java
+filteredTweets.cache()
+```
+
+Then, we calculated the most retweeted users and most retweeted tweets ad ordered them in descending order. The procedure was really similar to the one used in `BiGramsApp`.
+
+Then we saved the top ten users with:
+
+```java
+List<Long> top_ten_users = retweeted_users_count_descending
+    .map(user_and_count -> user_and_count._1)
+    .take(10);
+```
+
+Then we also persisted the RDD `retweeted_tweets_count_descending` because we use it many times. We used:
+
+```java
+retweeted_tweets_count_descending.cache()
+```
+
+Lastly, for each user we found all its retweeted tweets, and got the first one (as the most retweeted tweets were ordered in denscending order, and the order is preserved when applying a `filter` transformation, we ensure it is the most retweeted one).
+
+In terms of code, we did it using:
+
+```java
+List<Tuple2<Long, Long>> user_tweet = new ArrayList<Tuple2<Long, Long>>();
+
+for (Long user : top_ten_users) {
+    List<Long> user_retweeted_tweets = filteredTweets
+        .filter(tweet -> tweet.get().getRetweetedUserId().equals(user))
+        .map(tweet -> tweet.get().getRetweetedId()).collect();
+
+    List<Long> most_retweeted_tweet = retweeted_tweets_count_descending
+        .filter(tweet_id -> user_retweeted_tweets.contains(tweet_id._1))
+        .map(tuple -> tuple._1)
+        .take(1);
+    
+    user_tweet.add(new Tuple2<Long,Long>(user, most_retweeted_tweet.get(0)));
+}
+
+System.out.println(user_tweet);
+JavaRDD<Tuple2<Long, Long>> user_tweet_rdd = sparkContext.parallelize(user_tweet);
+
+user_tweet_rdd.saveAsTextFile(outputDir);
+```
 
 ### Results
 
-Due to lack of time we weren't able to fill this section.
+The top ten users and their corresponding most retweeted tweet are shown below in the form (user_id, tweet_id):
+```
+(3143260474,995356756770467840)
+(24679473,995397243426541568)
+(15584187,995433967351283712)
+(437025093,995435123351973890)
+(39538010,995434971765538817)
+(38381308,995388604045316097)
+(739812492310896640,995405811261300740)
+(1501434991,995394150978727936)
+(29056256,995381560277979136)
+(2754746065,995439842107576321)
+```

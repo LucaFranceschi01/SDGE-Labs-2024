@@ -83,9 +83,11 @@ public class MostRetweetedApp {
                 .map(tuple -> tuple._1)
                 .take(1);
             
-            System.out.println("Most retweeted tweet for user: " + user + "is " + most_retweeted_tweet.get(0) + ".");
             user_tweet.add(new Tuple2<Long,Long>(user, most_retweeted_tweet.get(0)));
         }
+
+        // Output in array form (ordered)
+        System.out.println(user_tweet);
 
         JavaRDD<Tuple2<Long, Long>> user_tweet_rdd = sparkContext.parallelize(user_tweet);
 
