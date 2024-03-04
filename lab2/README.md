@@ -155,11 +155,25 @@ spark-submit --class edu.upf.TwitterLanguageFilterApp --master local[2]  target/
 
 The following results come from executing the program with <b> ALL </b> the `.json` files.
 
+As in the statement it was ambiguous which 3 languages we should filter (in one part it said `es`, `ca` and `en` and in another it said `es`, `hu` and `pt`) we decided to benchmark all 5.
+
 Results for `es` language:
 
 ```
 Total number of tweets with language es: 509435
 Total time taken: 176286ms
+```
+
+Results for `ca` language:
+```
+Total number of tweets with language ca: 4583
+Total time taken: 184371ms
+```
+
+Results for `en` language:
+```
+Total number of tweets with language en: 446603
+Total time taken: 189688ms
 ```
 
 Results for `hu` language:
@@ -218,10 +232,24 @@ You can access the bucket with the results [here](https://s3.console.aws.amazon.
 
 The following results come from executing the program with <b> ALL </b> the `.json` files.
 
+Again, as in the statement it was ambiguous which 3 languages we should filter (in one part it said `es`, `ca` and `en` and in another it said `es`, `hu` and `pt`) we decided to benchmark all 5.
+
 Time taken for `es` language:
 
 ```
 2024-03-04T20:47:19.303Z INFO Step succeeded with exitCode 0 and took 144 seconds
+```
+
+Time taken for `ca` language:
+
+```
+2024-03-04T21:54:52.127Z INFO Step succeeded with exitCode 0 and took 116 seconds
+```
+
+Time taken for `en` language:
+
+```
+2024-03-04T21:43:24.702Z INFO Step succeeded with exitCode 0 and took 142 seconds
 ```
 
 Time taken for `hu` language:
