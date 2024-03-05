@@ -8,9 +8,8 @@ import scala.Tuple2;
 public class LanguageMapUtils {
 
     public static JavaPairRDD<String, String> buildLanguageMap(JavaRDD<String> lines) {
-        // return null;// IMPLEMENT ME
         return lines
-                .map(l -> l.split("\t"))
-                .mapToPair(splits -> Tuple2.apply(splits[1], splits[2]));
+            .map(l -> l.split("\t"))
+            .mapToPair(splits -> Tuple2.apply(splits[1], splits[2]));
     }
 }
