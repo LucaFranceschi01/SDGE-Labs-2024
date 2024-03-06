@@ -18,6 +18,7 @@ import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 import edu.upf.util.LanguageMapUtils;
 
 public class MastodonStateless {
+    @SuppressWarnings("deprecation") // para que no se llene de errores pero se puede quitar
     public static void main(String[] args) {
         String input = args[0];
 
@@ -42,15 +43,18 @@ public class MastodonStateless {
 
         language_map.cache();
 
-        JavaPairDStream<Object, Object> languages_times = stream
+        // language_map.saveAsTextFile("./testing");
+
+        JavaPairDStream<String, Long> languages_times = stream
             .map(tweet -> tweet.getLanguage())
             .mapToPair(lang -> new Tuple2<String, Long>(lang, 1L))
             .reduceByKey((a, b) -> a + b)
-            .transformToPair(rdd -> rdd.join(language_map));
+            .mapToPair(line -> new Tuple2<String, Long>(language_map.lookup(line._1).get(1), line._2));
+            // .transformToPair(rdd -> rdd.join(language_map));
 
         // Start the application and wait for termination signal
         ssc.start();
         ssc.awaitTermination();
         sc.close();
-}
+    }
 }
