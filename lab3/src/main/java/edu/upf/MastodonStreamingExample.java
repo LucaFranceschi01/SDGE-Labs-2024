@@ -8,6 +8,7 @@ import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.StreamingContext;
 import org.apache.spark.streaming.api.java.JavaDStream;
 
+@SuppressWarnings("deprecation")
 public class MastodonStreamingExample {
 
     public static void main(String[] args) {

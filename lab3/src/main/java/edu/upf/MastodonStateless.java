@@ -1,7 +1,8 @@
 package edu.upf;
 
+import javax.naming.event.ObjectChangeListener;
+
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.streaming.Durations;
@@ -17,8 +18,8 @@ import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 
 import edu.upf.util.LanguageMapUtils;
 
+@SuppressWarnings("deprecation")
 public class MastodonStateless {
-    @SuppressWarnings("deprecation") // para que no se llene de errores pero se puede quitar
     public static void main(String[] args) {
         String input = args[0];
 
@@ -36,25 +37,25 @@ public class MastodonStateless {
 
         JavaDStream<SimplifiedTweetWithHashtags> stream = new MastodonDStream(ssc, appConfig).asJStream();
 
-        // TODO IMPLEMENT ME
-        JavaSparkContext sc = new JavaSparkContext(conf);
-        JavaRDD<String> lines = sc.textFile(input);
+        JavaRDD<String> lines = jsc.sparkContext().textFile(input);
         JavaPairRDD<String, String> language_map = LanguageMapUtils.buildLanguageMap(lines);
 
-        language_map.cache();
-
-        // language_map.saveAsTextFile("./testing");
+        language_map.cache();   // persist
 
         JavaPairDStream<String, Long> languages_times = stream
             .map(tweet -> tweet.getLanguage())
-            .mapToPair(lang -> new Tuple2<String, Long>(lang, 1L))
-            .reduceByKey((a, b) -> a + b)
-            .mapToPair(line -> new Tuple2<String, Long>(language_map.lookup(line._1).get(1), line._2));
-            // .transformToPair(rdd -> rdd.join(language_map));
+            .mapToPair(lang -> new Tuple2<String, Long>(lang, 1L))      // emit intermediate (lang, 1)
+            .reduceByKey((a, b) -> a + b)                               // reduce (lang, count)
+            .transformToPair(rdd -> rdd.join(language_map))             // join with static rdd (lang, (count, language)))
+            .mapToPair(entry -> entry._2)                               // remove lang (count, language)
+            .transformToPair(rdd -> rdd.sortByKey(false))               // sort descending
+            .mapToPair(tuple -> tuple.swap());                          // swap (language, count)
+
+        languages_times.print();
 
         // Start the application and wait for termination signal
         ssc.start();
         ssc.awaitTermination();
-        sc.close();
+        jsc.close();
     }
 }

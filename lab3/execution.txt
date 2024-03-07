@@ -1,3 +1,5 @@
 # Spark command for example (no verbose)
 
 spark-submit --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties --class edu.upf.MastodonStreamingExample target/lab3-mastodon-1.0-SNAPSHOT.jar
+
+spark-submit --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties --class edu.upf.MastodonStateless target/lab3-mastodon-1.0-SNAPSHOT.jar resources/map.tsv
