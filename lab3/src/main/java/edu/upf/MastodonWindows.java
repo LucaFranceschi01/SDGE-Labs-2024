@@ -10,6 +10,7 @@ import com.github.tukaaa.MastodonDStream;
 import com.github.tukaaa.config.AppConfig;
 import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 
+@SuppressWarnings("deprecation")
 public class MastodonWindows {
         public static void main(String[] args) {
                 String input = args[0];

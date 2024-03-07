@@ -10,6 +10,7 @@ import org.apache.spark.streaming.dstream.DStream;
 
 import java.io.IOException;
 
+@SuppressWarnings("deprecation")
 public class MastodonWindowExample {
 
     public static void main(String[] args) throws InterruptedException, IOException {

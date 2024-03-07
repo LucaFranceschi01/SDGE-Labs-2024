@@ -10,6 +10,7 @@ import com.github.tukaaa.MastodonDStream;
 import com.github.tukaaa.config.AppConfig;
 import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 
+@SuppressWarnings("deprecation")
 public class MastodonWithState {
     public static void main(String[] args) throws InterruptedException {
         SparkConf conf = new SparkConf().setAppName("Real-time Mastodon With State");

@@ -10,6 +10,7 @@ import com.github.tukaaa.MastodonDStream;
 import com.github.tukaaa.config.AppConfig;
 import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 
+@SuppressWarnings("deprecation")
 public class MastodonHashtags {
 
         public static void main(String[] args) throws InterruptedException {
