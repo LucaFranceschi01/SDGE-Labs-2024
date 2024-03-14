@@ -28,7 +28,6 @@ public class MastodonWindows {
         JavaStreamingContext jsc = new JavaStreamingContext(sc);
         jsc.checkpoint("/tmp/checkpoint");
 
-        // TODO IMPLEMENT ME
         JavaRDD<String> lines = jsc.sparkContext().textFile(input);
         JavaPairRDD<String, String> language_map = LanguageMapUtils.buildLanguageMap(lines);
         language_map.cache();   // persist
@@ -42,7 +41,7 @@ public class MastodonWindows {
             .reduceByKey((a, b) -> a + b)                               // reduce (lang, count)
             .transformToPair(rdd -> rdd.join(language_map))             // join with static rdd (lang, (count, language)))
             .mapToPair(entry -> entry._2)                               // remove lang (count, language)
-            .transformToPair(rdd -> rdd.sortByKey(false));               // sort descending
+            .transformToPair(rdd -> rdd.sortByKey(false));              // sort descending
         
         batch_languages.print(15);
 
@@ -52,7 +51,7 @@ public class MastodonWindows {
             .reduceByKey((a, b) -> a + b)                               // reduce (lang, count)
             .transformToPair(rdd -> rdd.join(language_map))             // join with static rdd (lang, (count, language)))
             .mapToPair(entry -> entry._2)                               // remove lang (count, language)
-            .transformToPair(rdd -> rdd.sortByKey(false));               // sort descending
+            .transformToPair(rdd -> rdd.sortByKey(false));              // sort descending
 
         windowed_languages.print(15);
 
