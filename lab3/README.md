@@ -54,9 +54,14 @@ All files that use deprecated methods are accompained by their corresponding ```
 │           ├── log4j.properties
 │           ├── map.tsv
 │           └── map_reduced.tsv
-└── target
-    └── lab3-mastodon-1.0-SNAPSHOT.jar
-16 directories, 21 files
+├── target
+│   └── lab3-mastodon-1.0-SNAPSHOT.jar
+├── pom.xml
+├── app.conf
+├── log4j.properties
+└── README.md
+
+16 directories, 25 files
 ```
 
 ## Usage of the programs
